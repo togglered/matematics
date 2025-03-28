@@ -1,0 +1,90 @@
+{% extends "main/base.html" %}
+
+{% block sort %}{% endblock sort %}
+
+{% block title %}Математикс{% endblock title %}
+
+{% block page-name %}<h4>Тренировочные задания</h4>{% endblock page-name %}
+
+{% block content %}
+<form method="POST" action="/">
+    {% csrf_token %}
+    <div class="main-block m-2">
+        <div>
+            <h5>Задачи с кратким ответом</h5>
+            <ol>
+                {% for topic in topics %}
+                    {% if topic.number < 20 %}
+                        <li class='pt-2 topic1'>
+                            <button type="button" onclick="lessexercises('tel{{ topic.number }}')">
+                                -
+                            </button>
+                            <input id="tel{{ topic.number }}" value="0" class="tel-input" type="tel" name="{{ topic.number }}">
+                            <button type="button" onclick="moreexercises('tel{{ topic.number }}')">
+                                +
+                            </button>
+                            <a href="##" onclick="show_elements('#cat{{ topic.number }}')">{{ topic.name }}</a>
+                            <a href="{% url "main:topic_tasks" topic.number %}">См. {{ topic.tasks.all|length }} шт.</a>
+                            <div class="categories" id="cat{{ topic.number }}" style="display: none;">
+                                <ul>
+                                    <li><input class="m-1" id="main{{ topic.number }}" type="checkbox" onclick="checkbox_function(this, 'inp{{ topic.number }}');">Выбрать всё</li>
+                                    {% for category in topic.categories.all %}
+                                        <li><input name="{{ category.slug }}" class="m-1 inp{{ topic.number }}" type="checkbox" id="{{ category.id }}"
+                                            onclick="check_checkbox_status('inp{{ topic.number }}', 'main{{ topic.number }}')">{{category.name}}
+                                            <a href="{% url "main:category_tasks" category.id %}">См. {{ category.tasks.all|length }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+            <h5>Задачи с развернутым ответом</h5>
+            <ol start=20>
+                {% for topic in topics %}
+                    {% if topic.number > 19 %}
+                        <li class='pt-2 topic1'>
+                            <button type="button" onclick="lessexercises('tel{{ topic.number }}')">
+                                -
+                            </button>
+                            <input id="tel{{ topic.number }}" value="0" class="tel-input" type="tel" name="{{ topic.number }}">
+                            <button type="button" onclick="moreexercises('tel{{ topic.number }}')">
+                                +
+                            </button>
+                            <a href="##" onclick="show_elements('#cat{{ topic.number }}')">{{ topic.name }}</a>
+                            <a href="{% url "main:topic_tasks" topic.number %}">См. {{ topic.tasks.all|length }} шт.</a>
+                            <div class="categories" id="cat{{ topic.number }}" style="display: none;">
+                                <ul>
+                                    <li><input class="m-1" id="main{{ topic.number }}" type="checkbox" onclick="checkbox_function(this, 'inp{{ topic.number }}');">Выбрать всё</li>
+                                    {% for category in topic.categories.all %}
+                                        <li><input name="{{ category.slug }}" class="m-1 inp{{ topic.number }}" type="checkbox" id="{{ category.id }}"
+                                            onclick="check_checkbox_status('inp{{ topic.number }}', 'main{{ topic.number }}')">{{category.name}}
+                                            <a href="{% url "main:category_tasks" category.id %}">См. {{ category.tasks.all|length }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </div>
+        <div class="ready m-5 mb-0">
+                <button type="submit" id="ready-button">
+                    Составить вариант
+                    <br> 
+                    с количетвом заданий: 
+                    <span id="ready-button">
+                    0
+                    </span>
+                </button>
+            <ul class="part-select-buttons p-2 mt-2">
+                <li><input type="checkbox" onclick="first_part(this)"><a>Тестовая часть</a></li>
+                <li><input type="checkbox" onclick="second_part(this)"><a>Развернутая чать</a></li>
+            </ul>
+        </div>
+    </div>
+</form>
+{% endblock content %}
+

@@ -1,0 +1,217 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Мои тесты{% endblock title %}
+
+{% block all-content %}
+<input type="hidden" name="{{ test.id }}" id="test_id">
+{% if test.status == 'in_progress' %}
+    <div class="d-flex align-items-center" style="justify-content: space-between">
+        <div class="d-flex">
+            <img class="page-img" src="{% static "img/test-info.png" %}" alt="">
+            <h4 style="width: fit-content">
+                Инофрмация по тесту
+            </h4>
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="text" name="new_name" placeholder="{{ test.name }}" class="mx-1">
+                <button class="save-button">
+                    OK
+                </button>
+            </form>
+        </div>
+        <div>
+            <p>
+                В процессе
+            </p>
+        </div>
+    </div>
+    <h4 class="mt-2" style="text-align: center;">Содержимое</h4>
+        {% if tasks %}
+            <div class="d-flex" style="flex-direction: column; align-items: flex-end;">
+                <table class="statistics-table">
+                    <tr>
+                        <td style="width: 5%;">
+                            Id
+                        </td>
+                        <td style="width: 90%;">
+                            Текст
+                        </td>
+                        <td style="display: none;">
+                        </td>
+                    </tr>
+                    {% for task in tasks %}
+                        <tr class="delete_from_test"  data-task_id="{{ task.id }}">
+                            <td onclick="window.location.href = '/task-detail/' + {{ task.id }};"
+                            style="cursor: pointer;">
+                                {{ task.id }}
+                            </td>
+                            <td onclick="window.location.href = '/task-detail/' + {{ task.id }};"
+                            style="cursor: pointer;">
+                                {{ task.first_text }}
+                            </td>
+                            <td class="delete-link">
+                                <a href="##" id="{{ task.id }}" class="{{ test.id }}"
+                                class="delete-link">Удалить</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <button class="save-button" id="publish_button">
+                    Опубликовать
+                </button>
+            </div>
+        {% else %}
+            <div class="d-flex align-items-center" style="flex-direction: column;">
+                <table class="statistics-table">
+                    <tr>
+                        <td style="width: 5%;">
+                            Id
+                        </td>
+                        <td style="width: 90%;">
+                            Текст
+                        </td>
+                        <td style="display: none;">
+                        </td>
+                    </tr>
+                </table>
+                <h5>
+                    Здесь пока что ничего нет
+                </h5>
+            </div>
+        {% endif %}
+        <div class="main-block m-2">
+            <div>
+                <h5>Задачи с кратким ответом</h5>
+                <ol>
+                    {% for topic in topics %}
+                        {% if topic.number < 20 %}
+                            <li class='pt-2'>
+                                <a href="##" onclick="show_elements('#cat{{ topic.number }}')">{{ topic.name }}</a>
+                                <a href="{% url "main:topic_tasks" topic.number %}">См. {{ topic.tasks.all|length }} шт.</a>
+                                <a href="{% url "tests:add_random_task" test.id "topic" topic.id %}">Добавить случайную</a>
+                                <div class="categories" id="cat{{ topic.number }}" style="display: none;">
+                                    <ul style="list-style: circle;">
+                                        {% for category in topic.categories.all %}
+                                            <li>{{category.name}}
+                                                <a href="{% url "main:category_tasks" category.id %}">См. {{ category.tasks.all|length }}</a>
+                                                <a href="{% url "tests:add_random_task" test.id "category" topic.number %}">Добавить случайную</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+                <h5>Задачи с развернутым ответом</h5>
+                <ol start=20>
+                    {% for topic in topics %}
+                        {% if topic.number > 19 %}
+                        <li class='pt-2'>
+                            <a href="##" onclick="show_elements('#cat{{ topic.number }}')">{{ topic.name }}</a>
+                            <a href="{% url "main:topic_tasks" topic.number %}">См. {{ topic.tasks.all|length }} шт.</a>
+                            <a href="{% url "tests:add_random_task" test.id "topic" topic.id %}">Добавить случайную</a>
+                            <div class="categories" id="cat{{ topic.number }}" style="display: none;">
+                                <ul style="list-style: circle;">
+                                    {% for category in topic.categories.all %}
+                                        <li>{{category.name}}
+                                            <a href="{% url "main:category_tasks" category.id %}">См. {{ category.tasks.all|length }}</a>
+                                            <a href="{% url "tests:add_random_task" test.id "category" topic.number %}">Добавить случайную</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+{% else %}
+    <div class="d-flex align-items-center" style="justify-content: space-between">
+        <div class="d-flex align-items-center">
+            <img class="page-img" src="{% static "img/test-info.png" %}" alt="">
+            <h4 style="width: fit-content">
+                Инофрмация по тесту {{ test.name }}
+            </h4>
+        </div>
+        <div class="d-flex align-items-center">
+            <p>
+                Опубликован
+            </p>
+            <img class="page-img" style="cursor: pointer;" src="{% static "img/copy.png" %}" alt="Скопировать ссылку" onclick="copy_to_clipboard(window.location.host + '/test/' + {{ test.id }})">
+        </div>
+    </div>
+    <h4 class="mt-2" style="text-align: center;">Содержимое</h4>
+    <div class="d-flex" style="flex-direction: column; align-items: flex-end;">
+        <div>
+            <table class="statistics-table">
+                <tr style="width: 100%;">
+                    <td>
+                        Id
+                    </td>
+                    <td id="task_text">
+                        Текст
+                    </td>
+                </tr>
+                {% for task in tasks %}
+                    <tr class="delete_from_test"  style="cursor: pointer;">
+                        <td onclick="window.location.href = '/task-detail/' + {{ task.id }};"
+                        style="cursor: pointer;">
+                            {{ task.id }}
+                        </td>
+                        <td onclick="window.location.href = '/task-detail/' + {{ task.id }};"
+                        style="cursor: pointer;">
+                            {{ task.first_text }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <h4 class="mt-2" style="text-align: center;">Решения</h4>
+    <div class="d-flex" style="justify-content: center;">
+        {% if test.solved_tests.all %}
+        <table class="statistics-table">
+            <tr>
+                <td>
+                    Решил
+                </td>
+                <td>
+                    Оценка
+                </td>
+                <td>
+                    Дата решения
+                </td>
+            </tr>
+                {% for test in test.solved_tests.all %}
+                    <tr class="solving" data-testid="{{ test.id }}" style="cursor: pointer;">
+                        <td>
+                            {% if test.solved_by.first_name %}
+                                {{ test.solved_by.first_name }} {{ test.solved_by.last_name }}
+                            {% else %}
+                                Гость
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ test.score }} / {{ test.max_score }}
+                        </td>
+                        <td>
+                            {{ test.created }}
+                        </td>
+                    </tr>
+                {% endfor %}
+        </table>
+        {% else %}
+            <h5 class="mt-4">
+                Пока что никто не решил твой тест
+            </h5>
+        {% endif %}
+    </div>
+{% endif %}
+<script>
+	test_info();
+</script>
+{% endblock all-content %}

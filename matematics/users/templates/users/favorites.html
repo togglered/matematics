@@ -1,0 +1,66 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Избранное{% endblock title %}
+
+{% block all-content %}
+<div class="d-flex align-items-center mb-2">
+    <img class="page-img" src="{% static "img/unlike.png" %}" alt="">
+    <h4 style="width: fit-content">
+        Избранное {{ user.first_name }} {{ user.last_name }}
+    </h4>
+</div>
+<h5>Задачи</h5>
+    {% if tasks %}
+        <div class="d-flex" style="flex-direction: column; align-items: flex-end;">
+            <table class="statistics-table">
+                <tr>
+                    <td style="width: 5%;">
+                        Id
+                    </td>
+                    <td style="width: 90%;">
+                        Текст
+                    </td>
+                    <td style="display: none;">
+                    </td>
+                </tr>
+                {% for task in tasks %}
+                    <tr class="delete_from_favorite"  data-task_id="{{ task.id }}">
+                        <td onclick="window.location.href = '/task-detail/' + {{ task.id }};"
+                        style="cursor: pointer;">
+                            {{ task.id }}
+                        </td>
+                        <td onclick="window.location.href = '/task-detail/' + {{ task.id }};"
+                        style="cursor: pointer;">
+                            {{ task.first_text }}
+                        </td>
+                        <td class="delete-link">
+                            <a href="##" id="{{ task.id }}" class="{{ test.id }}"
+                            class="delete-link">Удалить</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <div class="d-flex align-items-center" style="flex-direction: column;">
+            <table class="statistics-table">
+                <tr>
+                    <td style="width: 5%;">
+                        Id
+                    </td>
+                    <td style="width: 90%;">
+                        Текст
+                    </td>
+                    <td style="display: none;">
+                    </td>
+                </tr>
+            </table>
+            <h5>
+                Здесь пока что ничего нет
+            </h5>
+        </div>
+    {% endif %}
+</div>
+{% endblock all-content %}

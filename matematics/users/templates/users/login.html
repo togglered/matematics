@@ -1,0 +1,26 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Логин{% endblock title %}
+
+{% block all-content %}
+<div class="login-box">
+    <h3>
+        Войти
+    </h3>
+    <form id="signin" method='post' action="">
+        {% csrf_token %}
+        <div class="reg-form">
+            <input id="form-input" type="text" name="email" placeholder="Почта">
+            <div style="background-color: #fff; width: 260px; height: 2px; position: absolute; z-index: 2; top: 43px;"></div>
+            <input id="form-input" type="password" name="password" placeholder="Пароль">
+        </div>
+        <div class="input-div" style="top: 12px">
+            <input type="image" class="" src="{% static 'img\arrow.png' %}">
+        </div>
+        <p class="p-reg-form">Нет аккаунта? <a href="{% url 'users:register' %}">зарегестрироваться</a></p>
+        <p class="p-reg-form">Забыли пароль? <a href="{% url 'users:forgot_password' %}">я забыл пароль</a></p>
+    </form>
+</div>
+{% endblock all-content %}
