@@ -1,0 +1,124 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}{% endblock title %}</title>
+        <script src='{% static "js/script.js" %}'></script>
+        <link rel="stylesheet" href="{% static 'bootstrap\css\bootstrap.min.css' %}">
+        <link rel="stylesheet" href={% static "css/base.css" %}>
+        <script>
+            var csrf_token = '{{ csrf_token }}';
+        </script>
+    </head>
+    <body>
+        <header class="header d-flex container">
+            <div class="d-flex">
+                <div class="header-logo">
+                    <a href="{% url 'main:topic_list' %}">
+                        <img src="{% static 'img\logo.png' %}" alt="" class="matematics-logo">
+                    </a>
+                </div>
+                <div class="header-text">
+                    <h1>Математикс</h1>
+                    <h3>ОГЭ по математике</h3>
+                </div>
+            </div>
+            {% if user.email %}
+                <div class="user-info">
+                    <div class="d-flex align-items-center" style="height: 100%;">
+                        {% if user.avatar %}
+                            <img class="avatar" src="{{ user.avatar.url }}" alt="">
+                        {% else %}
+                            {% if user.gender == 'Мужской' %}
+                                <img class="avatar" src="{% static "img/no-avatar-man.png" %}" alt="">
+                            {% else %}
+                                <img class="avatar" src="{% static "img/no-avatar-woman.png" %}" alt="">
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="user-text">
+                        <p class="m-0" style="text-indent: 0; width: fit-content;">
+                            {{ user.first_name }} {{ user.last_name }}
+                        </p>
+                        <div class="user-buttons">
+                            <a href="{% url "users:profile" %}">
+                                Профиль <img class="button-image" src="{% static "img/user.png" %}" alt="">
+                            </a>
+                            <a href="{% url "users:statistics" %}">
+                                Статистика <img class="button-image" src="{% static "img/statistic.png" %}" alt="">
+                            </a>
+                            <a href="{% url "users:favorites" %}">
+                                Избранное <img class="button-image" src="{% static "img/unlike.png" %}" alt="">
+                            </a>
+                            <a href="{% url "users:logout" %}">
+                                Выйти <img class="button-image" src="{% static "img/logout.png" %}" alt="">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+            <div class="user-info justify-content-center" style="height: fit-content;">
+                <a href="{% url 'users:login' %}">
+                    Авторизоваться <img class="button-image" src="{% static "img/login.png" %}" alt="">
+                </a>
+            </div>
+            {% endif %}
+        </header>
+        {% if user.type == 'Учитель' %}
+            <div class="container main-page-buttons">
+                <div class="main-page-button">
+                    <a href="{% url 'tests:my_tests' %}">
+                        Мои тесты
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+        <div class="container content">
+            {% block all-content %}
+                <div class="d-flex under-header">
+                    {% block page-name %}{% endblock page-name %}
+                    <form role="search" method="get" id="searchform" action="{% url "main:search" %}">
+                        <div class='search-box'>
+                            <input class="search-field" placeholder='Поиск' type="text" name="req" id="req" value="{{ search_req }}">
+                            <button class="search-button" type="submit" id="searchsubmit">
+                                Найти
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% block sort %}
+                    <div class="d-flex">
+                        <div class="sort-box">
+                            <select id="sort-select" onchange="open_link_with_params(['sorted'], [this.value])">
+                                <option value="">Сортировка</option>
+                                <option value="?">Случайно</option>
+                                <option value="-created">Сначала новые</option>
+                                <option value="created">Сначала старые</option>
+                            </select>
+                        </div>
+                        <div class="m-2 showed-box">Показывать по 
+                            <a href = "##" onclick = "open_link_with_params(['showed'], [this.textContent])">5</a>
+                            <a href = '##' onclick = "open_link_with_params(['showed'], [this.textContent])">10</a>
+                            <a href = '##' onclick = "open_link_with_params(['showed'], [this.textContent])">20</a>
+                        </div>
+                    </div>
+                {% endblock sort %}
+                {% block content %}
+                {% endblock content %}
+            {% endblock all-content %}
+        </div>
+        <footer class="footer">
+            <div class="d-flex">
+                <img src="{% static "img/logo-chb.png" %}" style = 'width: 150px; height: 100px;'>
+               <div class="footer-text">
+                 <h1>Математикс</h1>
+                 <h2>ОГЭ по математике</h2>
+               </div>
+             </div>
+           <h4>support@matematics.ru</h4>
+        </footer>
+        <script src="{% static "bootstrap\js\bootstrap.bundle.min.js" %}" async defer></script>
+    </body>
+</html>

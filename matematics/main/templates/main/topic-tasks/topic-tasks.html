@@ -1,0 +1,132 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Задания №{{ topic.number }}{% endblock title %}
+
+{% block page-name %}<h4>Задания №{{ topic.number }}</h4>{% endblock page-name %}
+
+{% block content %}
+<div class="tasks-box">
+    <ul>
+        {% for task in tasks %}
+            <li>
+                <div class = "d-flex p-1">
+                    <div class = 'task-count'>
+                        {{ counter_start|add:forloop.counter }}
+                    </div>
+                    <div class="pt-1 pb-3" style="width: 100%;">
+                        <div class="d-flex" style="justify-content: space-between;">
+                            <a href="{% url 'main:get_task' task.id %}">
+                                Id задачи: {{ task.id }}
+                            </a>
+                            <a href="{% url 'main:topic_tasks' task.topic.number %}">
+                                №{{ task.topic.number }}. {{ task.topic.name }}
+                            </a>
+                        </div>
+                        <p>
+                            {{ task.first_text }}
+                        </p>
+                        <p>
+                            {{ task.second_text }}
+                        </p>
+                        {% if task.image %}
+                        <p>
+                            <img class="task-img" src="{{ task.image.url }}" alt="">
+                        </p>
+                        {% endif %}
+                        <div class="mb-1 d-flex" style="justify-content: space-between;">
+                            <a href="##" onclick="show_elements('#solution{{ task.id }}')">
+                                Показать решение
+                            </a>
+                            <div class="d-flex" style="gap: 5px;">
+                                <div class="add_to_tests" 
+                                style="cursor: pointer;"
+                                id="{{ task.id }}">
+                                    <img class="page-img m-0" src="{% static "img/test_green.png" %}" alt="">
+                                </div>
+                                {% if task in user.favorites_tasks.all %}
+                                    <div class="add_to_favorite" 
+                                    style="cursor: pointer;"
+                                    id="{{ task.id }}">
+                                        <img class="page-img m-0 like" src="{% static "img/like.png" %}" alt="">
+                                    </div>
+                                {% else %}
+                                <div class="add_to_favorite" 
+                                style="cursor: pointer;"
+                                id="{{ task.id }}">
+                                    <img class="page-img m-0 like" src="{% static "img/unlike.png" %}" alt="">
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div id="solution{{ task.id }}" style="display: none;">
+                            <p>
+                            {{ task.solution }}
+                            </p>
+                            {% if task.solution_image %}
+                                <p>
+                                    <img class="task-img" src="{{ task.solution_image.url }}" alt="">
+                                </p>
+                            {% endif %}
+                            <p>
+                                Ответ: {{ task.answer }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+<ul class="paginator">
+    {% for page in pages %}
+        {% if page >= current_page|add:-2 and page <= current_page|add:2 %}
+            <li>
+                <button class="{% if current_page == page %}disabled{% endif %}"
+                {% if not current_page == page %}onclick="open_link_with_params(['page'], [{{ page }}])"{% endif %}>
+                    <a href="##" class="{% if current_page == page %}disabled{% endif %}">
+                        {{ page }}
+                    </a>
+                </dutton>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+<div class="modal-window hidden sticky">
+    {% if user.id %}
+        <div class="d-flex" style="flex-direction: column; align-items: center;">
+            <div>
+                Добавить задачу в тест
+            </div>
+            <ul>
+                {% for test in in_progress_tests %}
+                    <li class="d-flex">
+                        <input type="checkbox" id="{{ test.id }}" class="chosen-tests">
+                        <div class="mx-2">
+                            {{ test.name }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div>
+                <button class="save-button" id="">
+                    Добавить задачу
+                </button>
+                <button class="save-button close-btn">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    {% else %}
+        <div>
+            <h4>
+                Чтобы создавать свои тесты, необходимо зарегестрироваться
+            </h4>
+        </div>
+    {% endif %}
+</div>
+<script>
+    open_modal_window();
+</script>
+{% endblock content %}

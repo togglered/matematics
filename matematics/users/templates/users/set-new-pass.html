@@ -1,0 +1,24 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Восстановление пароля{% endblock title %}
+
+{% block all-content %}
+<div class="login-box">
+    <h3>
+        Введите новый пароль
+    </h3>
+    <form id="signin" method='post' action="">
+        {% csrf_token %}
+        <div class="reg-form">
+            <input id="form-input" type="password" name="password" placeholder="Пароль">
+            <div style="background-color: #fff; width: 260px; height: 2px; position: absolute; z-index: 2; top: 43px;"></div>
+            <input id="form-input" type="password" name="password_check" placeholder="Повторите пароль">
+        </div>
+        <div class="input-div" style="top: 12px">
+            <input type="image" class="" src="{% static 'img\arrow.png' %}">
+        </div>
+    </form>
+</div>
+{% endblock all-content %}

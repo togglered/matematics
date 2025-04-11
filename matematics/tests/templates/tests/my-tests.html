@@ -1,0 +1,77 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Мои тесты{% endblock title %}
+
+{% block all-content %}
+<div class="d-flex align-items-center" style="justify-content: space-between;">
+    <div class="d-flex">
+        <img class="page-img" src="{% static "img/test.png" %}" alt="">
+        <h4 style="width: fit-content">
+            Тесты пользователя {{ user.first_name }} {{ user.last_name }}
+        </h4>
+    </div>
+    <div class="">
+        <button class="create-test-button save-button" onclick="window.location.href = '{% url "tests:create_test" %}'">
+            Создать тест
+        </button>
+    </div>
+</div>
+{% if tests %}
+    <div>
+        <table class="statistics-table">
+            <tr>
+                <td style="width: 10%;">
+                    Имя
+                </td>
+                <td style="width: 10%;">
+                    Статус
+                </td>
+                <td>
+                    Дата создания
+                </td>
+                <td class="hidden">
+                </td>
+            </tr>
+            {% for test in tests %}
+                <tr class="test" data-test_id="{{ test.id }}">
+                    <td onclick="window.location.href = '{% url "tests:test_info" test.id %}'"
+                    style="cursor: pointer;">
+                        {% if test.name %}
+                            {{ test.name }}
+                        {% endif %}
+                    </td>
+                    <td onclick="window.location.href = '{% url "tests:test_info" test.id %}'"
+                    style="cursor: pointer;">
+                        {% if test.status == 'in_progress' %}
+                            В процессе
+                        {% else %}
+                            Опубликован
+                        {% endif %}
+                    </td>
+                    <td onclick="window.location.href = '{% url "tests:test_info" test.id %}'"
+                    style="cursor: pointer;">
+                        <div style="display: flex; justify-content: space-between;">
+                            {{ test.created }}
+                        </div>
+                    </td>
+                    <td class="delete-link" id="{{ test.id }}">
+                        <a href="##" 
+                        class="delete-link">Удалить</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% else %}
+<div style="text-align: center;" class="mt-5">
+    <h5>
+        Здесь ничего нет
+    </h5>
+</div>
+{% endif %}
+<script>
+    my_tests();
+</script>
+{% endblock all-content %}

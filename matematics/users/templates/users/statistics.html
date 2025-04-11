@@ -1,0 +1,47 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Статистика{% endblock title %}
+
+{% block all-content %}
+<div class="d-flex align-items-center">
+    <img class="page-img" src="{% static "img/statistic.png" %}" alt="">
+    <h4 style="width: fit-content">
+        Статистика пользователя {{ user.first_name }} {{ user.last_name }}
+    </h4>
+</div>
+<div>
+    <table class="statistics-table">
+        <tr>
+            <td>
+                #
+            </td>
+            <td>
+                Оценка
+            </td>
+            <td>
+                Дата
+            </td>
+        </tr>
+        {% for test in tests %}
+            <tr>
+                <td>
+                    {{ forloop.counter }}
+                </td>
+                <td>
+                    {{ test.score }} / {{ test.max_score }}
+                </td>
+                <td>
+                    <div style="display: flex; justify-content: space-between;">
+                        {{ test.created }}
+                        <a href="{% url 'main:test_result' test.id %}">
+                            Перейти
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock all-content %}

@@ -1,0 +1,82 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+
+{% block title %}Профиль{% endblock title %}
+
+{% block all-content %}
+
+<form action="" method='post' enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="d-flex">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            {% if user.avatar %}
+                <img class="big-avatar" src="{{ user.avatar.url }}">
+            {% else %}
+                {% if user.gender == 'Мужской' %}
+                    <img class="big-avatar" src="{% static "img/no-avatar-man.png" %}" alt="">
+                {% else %}
+                    <img class="big-avatar" src="{% static "img/no-avatar-woman.png" %}" alt="">
+                {% endif %}
+            {% endif %}
+            <input class="m-3" type="file" name="avatar_photo" accept=".jpg, .png">
+        </div>
+        <div class="protile-info" style="height: 400px; width: 600px;">
+            <div class="d-flex align-items-center">
+                <img class="page-img" src="{% static "img/user.png" %}" alt="">
+                <h4 style="width: fit-content">
+                    Профиль
+                </h4>
+            </div>
+                <div class="profile-change">
+                <div>
+                    <h5>Имя</h5>
+                    <input type="text" value="{{ user.first_name }}" name="new_first_name">
+                </div>
+                <div>
+                    <h5>Фамилия</h5>
+                    <input type="text" value="{{ user.last_name }}" name="new_last_name">
+                </div>
+                <div>
+                    <h5>Пол</h5>
+                    <select name="gender">
+                        <option value="Женский" {% if user.gender == 'Женский' %}selected{% endif %}>Женский</option>
+                        <option value="Мужской" {% if user.gender == 'Мужской' %}selected{% endif %}>Мужской</option>
+                    </select>
+                </div>
+            </div>
+            <div class="">
+                <h5>Смена пароля</h5>
+                <input type="text" name="new_password" id="" class="mb-2" placeholder="Новый пароль"> <br>
+                <input type="text" name="new_password_repeat" id="" class="mb-2" placeholder="Повтори пароль">
+            </div>
+            <button class="save-button">
+                Сохранить
+            </button>
+            <div class="profile-change">
+                <div>
+                    <h5>Почта</h5>
+                    {{ user.email }}
+                    {% if user.email_proof %}
+                        <img style="width: 20px;" src="{% static "img/green_tick.png" %}" title="Ваш email подтвержден">
+                    {% else %}
+                        <img style="width: 20px;" src="{% static "img/red_cross.png" %}" title="Ваш email не подтвержден">
+                    <p class="verification-link">
+                        <a href="{% url 'users:get_proof_link' %}">подтвердить почту</a>
+                    </p>
+                    {% endif %}
+                    
+                </div>
+                <div>
+                    <h5>Зарегестрирован</h5>
+                    {{ user.date_joined }}
+                </div>
+                <div>
+                    <h5>Тип</h5>
+                    {{ user.type }}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock all-content %}

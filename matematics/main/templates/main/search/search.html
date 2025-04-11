@@ -1,0 +1,118 @@
+{% extends "main/base.html" %}
+
+{% block title %}Поиск{% endblock title %}
+
+{% block page-name %}<h4>Результаты поиска</h4>{% endblock page-name %}
+
+{% block content %}
+{% if tasks %}
+<div class="tasks-box">
+    <ul>
+        {% for task in tasks %}
+            {% if task.topic.number < 20 %}
+                <li>
+                    <div class = "d-flex p-1">
+                        <div class = 'task-count'>
+                            {{ forloop.counter }}
+                        </div>
+                        <div class="pt-1 pb-3" style="width: 100%;">
+                            <div class="d-flex" style="justify-content: space-between;">
+                                <a href="{% url 'main:get_task' task.id %}">
+                                    Id задачи: {{ task.id }}
+                                </a>
+                                <a href="{% url 'main:topic_tasks' task.topic.number %}">
+                                    №{{ task.topic.number }}. {{ task.topic.name }}
+                                </a>
+                            </div>
+                            <p>
+                                {{ task.first_text }}
+                            </p>
+                            <p>
+                                {{ task.second_text }}
+                            </p>
+                            {% if task.image %}
+                            <p>
+                                <img class="task-img" src="{{ task.image.url }}" alt="">
+                            </p>
+                            {% endif %}
+                            <div class="mb-1">
+                                <a href="##" onclick="show_elements('#solution{{ task.id }}')">
+                                    Показать решение
+                                </a>
+                            </div>
+                            <div id="solution{{ task.id }}" style="display: none;">
+                                <p>
+                                {{ task.solution }}
+                                </p>
+                                {% if task.solution_image %}
+                                    <p>
+                                        <img class="task-img" src="{{ task.solution_image.url }}" alt="">
+                                    </p>
+                                {% endif %}
+                                <p>
+                                    Ответ: {{ task.answer }}
+                                </p>
+                            </div>
+                            Задачу решили: {{ task.solved_percent }}% пользователей
+                        </div>
+                    </div>
+                </li>
+            {% else %}
+                <li>
+                    <div class = "d-flex p-1">
+                        <div class = 'task-count'>
+                            {{ forloop.counter }}
+                        </div>
+                        <div class="pt-1 pb-3" style="width: 100%;">
+                            <div class="d-flex" style="justify-content: space-between;">
+                                <a href="{% url 'main:get_task' task.id %}">
+                                    Id задачи: {{ task.id }}
+                                </a>
+                                <a href="{% url 'main:topic_tasks' task.topic.number %}">
+                                    №{{ task.topic.number }}. {{ task.topic.name }}
+                                </a>
+                            </div>
+                            <p>
+                                {{ task.first_text }}
+                            </p>
+                            <p>
+                                {{ task.second_text }}
+                            </p>
+                            {% if task.image %}
+                            <p>
+                                <img class="task-img" src="{{ task.image.url }}" alt="">
+                            </p>
+                            {% endif %}
+                            <div class="mb-1">
+                                <a href="##" onclick="show_elements('#solution{{ task.id }}')">
+                                    Показать решение
+                                </a>
+                            </div>
+                            <div id="solution{{ task.id }}" style="display: none;">
+                                <p>
+                                {{ task.solution }}
+                                </p>
+                                {% if task.solution_image %}
+                                    <p>
+                                        <img class="task-img" src="{{ task.solution_image.url }}" alt="">
+                                    </p>
+                                {% endif %}
+                                
+                            </div>
+                            Задачу решили: {{ task.solved_percent }}% пользователей
+                        </div>
+                    </div>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+{% else %}
+{% block sort %}{% endblock sort %}
+<div class="no-search">
+    <h4>
+        Ничего не найдено
+    </h4>
+</div>
+{% endif %}
+{% endblock content %}
